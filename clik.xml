@@ -114,6 +114,32 @@
             </entry>
         </enum>
 
+        <enum name="CLIK_SAFETY_FLAGS_IN">
+            <description>CLIK safety flags sent from Safety Consumer to Safety Provider.</description>
+            <entry value="1" name="CLIK_SAFETY_FLAG_COMM_ERROR">
+                <description>An error was detected in the previous CLIK_SAFETY_RESPONSE_SPDU.</description>
+            </entry>
+            <entry value="2" name="CLIK_SAFETY_FLAG_OP_ACK_REQ">
+                <description>Operator acknowledgement requested from Safety Consumer</description>
+            </entry>
+            <entry value="4" name="CLIK_SAFETY_FLAG_COMM_FSV_ACTIVATED">
+                <description>Fail safe values are activated</description>
+            </entry>
+        </enum>
+
+        <enum name="CLIK_SAFETY_FLAGS_OUT">
+            <description>CLIK safety flags sent from Safety Provider to Safety Consumer.</description>
+            <entry value="1" name="CLIK_SAFETY_FLAG_OP_ACK_PROV">
+                <description>Operator has acknowledged.</description>
+            </entry>
+            <entry value="2" name="CLIK_SAFETY_FLAG_ACTIVATE_FSV">
+                <description>OSafety Provider requesting activation of fail safe values</description>
+            </entry>
+            <entry value="4" name="CLIK_SAFETY_FLAG_TEST_MODE_ACTIVATED">
+                <description>Test mode has been activated</description>
+            </entry>
+        </enum>
+
         <enum name="CLIK_POWER_CMD">
             <description>CLIK power circuit command set.</description>
             <entry value="0" name="CLIK_POWER_CMD_ON">
@@ -145,8 +171,8 @@
             <entry value="0" name="CLIK_CHAN_STATE_NO_PAYLOAD_DETECTED">
                 <description>No Payload connected</description>
             </entry>
-            <entry value="1" name="CLIK_CHAN_STATE_PAYLOAD_POWERED_OFF">
-                <description>Power circuit to Payload is off</description>
+            <entry value="1" name="CLIK_CHAN_STATE_PAYLOAD_DETECTED">
+                <description>Payload detected but Power circuit to Payload is off</description>
             </entry>
             <entry value="2" name="CLIK_CHAN_STATE_PAYLOAD_INIT">
                 <description>Setting Payload Identifiers</description>
@@ -163,10 +189,7 @@
                 <param index="1" label="Capability ID" minValue="1" decimalPlaces="0" increment="1">Identifier of Capabilitity to send event to</param>
                 <param index="2" label="Capability Event" enum="CLIK_CAPABILITY_EVENT">Event to deliver</param>
             </entry>
-            <entry value="53901" name="MAV_CMD_CLIK_PAYLOAD_GOTO_INIT" command="true">
-                <description>Stop CLIK Payload MAVLink comms and return to INIT state.</description>
-            </entry>
-            <entry value="53902" name="MAV_CMD_CLIK_PWR_SET" command="true">
+            <entry value="53901" name="MAV_CMD_CLIK_PWR_SET" command="true">
                 <description>Deliver an event to a CLIK Payload capability</description>
                 <param index="1" label="chan_id" minValue="1" decimalPlaces="0" increment="1">Channel to command. 0 for master power.</param>
                 <param index="2" label="Command" enum="CLIK_POWER_CMD">Power command</param>
@@ -244,6 +267,25 @@
             <description>CLIK Safety device diagnostic messages.</description>
             <field type="char[120]" name="newest_msg">Most recent diagnostic message.</field>
             <field type="char[120]" name="second_newest_msg">Second most recent diagnostic message.</field>
+        </message>
+
+        <message id="53907" name="CLIK_SAFETY_REQUEST_SPDU">
+            <description>CLIK Safety Consumer request message to Safety Provider.</description>
+            <field type="uint32_t" name="safety_consumer_id">Identifier of the Safety Consumer.</field>
+            <field type="uint32_t" name="monitoring_number">Second most recent diagnostic message.</field>
+            <field type="uint8_t" name="flags" enum="CLIK_SAFETY_FLAGS_IN">Safety flags</field>
+            <field type="uint8_t" name="target_system">System ID</field>
+            <field type="uint8_t" name="target_component">Component ID</field>
+        </message>
+
+        <message id="53908" name="CLIK_SAFETY_RESPONSE_SPDU">
+            <description>CLIK Safety Provider response message back to Safety Consumer.</description>
+            <field type="uint8_t[16]" name="safety_data">Returned safety data.</field>
+            <field type="uint8_t" name="flags" enum="CLIK_SAFETY_FLAGS_OUT">Safety flags</field>
+            <field type="uint32_t[3]" name="spdu_id">Calculated values used to determine safety data came from the correct Safety Provider.</field>
+            <field type="uint32_t" name="safety_consumer_id">Identifier of the Safety Consumer.</field>
+            <field type="uint32_t" name="monitoring_number">Second most recent diagnostic message.</field>
+            <field type="uint32_t" name="crc">Cyclic redundancy check.</field>
         </message>
 
     </messages>
