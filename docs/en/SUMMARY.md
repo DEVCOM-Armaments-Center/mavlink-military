@@ -20,4 +20,5 @@
 - [Services](services/index.md)
   - [Generic Payload Protocol](services/generic_payload.md)
   - [Payload Catalogue Metadata](services/payload_metadata.md)
+  - [CLIK Protocol](services/clik.md)
 - [Contributing](contributing.md)
