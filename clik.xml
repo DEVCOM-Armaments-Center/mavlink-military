@@ -34,7 +34,7 @@
                 <description>All capabilities are operational and ready for use</description>
             </entry>
             <entry value="1" name="CLIK_HEALTH_PARTIAL_OP">
-                <description>Some, but not all, capabilities are operational and ready for use. i.e. multi dropper has release some of its munitions.</description>
+                <description>Some, but not all, capabilities are operational and ready for use. i.e. multi dropper has released some of its munitions.</description>
             </entry>
             <entry value="2" name="CLIK_HEALTH_DEGRADED">
                 <description>One or more capabilities are operating in a degraded mode that prevents full performance.</description>
@@ -48,7 +48,7 @@
         </enum>
         
         <enum name="CLIK_CAPABILITY_TYPE">
-            <!-- Values 0-127 reserved for CLIK. 128-255 available for vendor specific capabilities -->
+            <!-- Values 0-191 reserved for CLIK. 192-255 available for vendor specific capabilities -->
             <description>CLIK Payload capability types.</description>
             <entry value="0" name="CLIK_CAPABILITY_TYPE_BASIC">
                 <description>Simple capability</description>
@@ -62,7 +62,7 @@
         </enum>
 
         <enum name="CLIK_CAPABILITY_STATE">
-            <!-- Values 0-127 reserved for CLIK. 128-255 available for vendor specific capabilities -->
+            <!-- Values 0-191 reserved for CLIK. 192-255 available for vendor specific states -->
             <description>CLIK Payload capability states.</description>
             <entry value="0" name="CLIK_CAPABILITY_STATE_UNAVAILABLE">
                 <description>Not available</description>
@@ -79,7 +79,7 @@
         </enum>
 
         <enum name="CLIK_CAPABILITY_EVENT">
-            <!-- Values 0-127 reserved for CLIK. 128-255 available for vendor specific capabilities -->
+            <!-- Values 0-191 reserved for CLIK. 192-255 available for vendor specific events -->
             <description>CLIK Payload capability events.</description>
             <entry value="0" name="CLIK_EVENT_ACTIVATE">
                 <description>Activate a capability</description>
@@ -272,7 +272,7 @@
         <message id="53907" name="CLIK_SAFETY_REQUEST_SPDU">
             <description>CLIK Safety Consumer request message to Safety Provider.</description>
             <field type="uint32_t" name="safety_consumer_id">Identifier of the Safety Consumer.</field>
-            <field type="uint32_t" name="monitoring_number">Second most recent diagnostic message.</field>
+            <field type="uint32_t" name="monitoring_number">Rolling sequence number sent to Producer.</field>
             <field type="uint8_t" name="flags" enum="CLIK_SAFETY_FLAGS_IN">Safety flags</field>
             <field type="uint8_t" name="target_system">System ID</field>
             <field type="uint8_t" name="target_component">Component ID</field>
@@ -284,7 +284,7 @@
             <field type="uint8_t" name="flags" enum="CLIK_SAFETY_FLAGS_OUT">Safety flags</field>
             <field type="uint32_t[3]" name="spdu_id">Calculated values used to determine safety data came from the correct Safety Provider.</field>
             <field type="uint32_t" name="safety_consumer_id">Identifier of the Safety Consumer.</field>
-            <field type="uint32_t" name="monitoring_number">Second most recent diagnostic message.</field>
+            <field type="uint32_t" name="monitoring_number">Response back to Consumer with recieved monitoring number.</field>
             <field type="uint32_t" name="crc">Cyclic redundancy check.</field>
         </message>
 
