@@ -3,7 +3,7 @@
     <!-- US Army Armaments Center -->
     <!-- Common Lethality Integration Kit -->
 
-    <include>common.xml</include>
+    <include>military.xml</include>
     <enums>
         <!-- CLIK specific type added to MAV_TYPE enum defined in simple.xml -->
         <enum name="MAV_TYPE">
