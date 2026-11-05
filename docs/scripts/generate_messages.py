@@ -25,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DOCS = os.path.dirname(HERE)
 ROOT = os.path.dirname(DOCS)
 OUT = os.path.join(DOCS, "en", "messages") + os.sep
-REPO = "https://github.com/Dronecode/mavlink-military"
+REPO = "https://github.com/DEVCOM-Armaments-Center/mavlink-military"
 
 # Links in the upstream templates that point at devguide pages we don't host.
 UPSTREAM_LINKS = {
@@ -47,6 +47,18 @@ Entities included from [common.xml](common.md) are listed as headings only, with
 
 """
 
+CLIK_HEADER = f"""\
+<!-- THIS FILE IS AUTO-GENERATED from clik.xml by docs/scripts/generate_messages.py. Do not edit. -->
+
+# Dialect: CLIK (clik.xml)
+
+This page is a human-readable form of the dialect definition file
+[clik.xml]({REPO}/blob/main/clik.xml).
+To change a message, edit the XML and open a pull request.
+
+Entities included from [military.xml](military.md) are listed as headings only, with a link to their full definition.
+
+"""
 
 def pinned_ref():
     pins = os.path.join(ROOT, ".github", "mavlink-pins.env")
@@ -89,6 +101,9 @@ def main():
         if filename == "military":
             # Keep the shared legend/style block, replace the upstream-dialect preamble.
             text = MILITARY_HEADER + text[text.index('<span id="mav2_extension_field">') :]
+        if filename == "clik":
+            # Keep the shared legend/style block, replace the upstream-dialect preamble.
+            text = CLIK_HEADER + text[text.index('<span id="mav2_extension_field">') :]
         return text
 
     gen.MAVXML.get_top_level_docs = top_level_docs
@@ -99,10 +114,12 @@ def main():
         for name in ("common", "standard", "minimal"):
             shutil.copy(os.path.join(mavlink_dir, "message_definitions", "v1.0", f"{name}.xml"), defs)
         shutil.copy(os.path.join(ROOT, "military.xml"), defs)
+        shutil.copy(os.path.join(ROOT, "clik.xml"), defs)
 
         if os.path.isdir(OUT):
             shutil.rmtree(OUT)
         gen.XMLFiles(dialect="military", source_dir=defs + os.sep).generateDocs(OUT)
+        gen.XMLFiles(dialect="clik", source_dir=defs + os.sep).generateDocs(OUT)
 
     for page in os.listdir(OUT):
         path = os.path.join(OUT, page)
@@ -112,6 +129,8 @@ def main():
             text = text.replace(f"]({old}", f"]({new}")
         if page == "military.md":
             front = "---\neditLink_path: military.xml\n---\n\n"
+        elif page == "clik.md":
+            front = "---\neditLink_path: clik.xml\n---\n\n"
         else:
             front = "---\neditLink: false\n---\n\n"
         with open(path, "w", encoding="utf-8") as f:
