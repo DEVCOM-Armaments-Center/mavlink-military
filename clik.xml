@@ -28,76 +28,6 @@
             </entry>
         </enum>
 
-        <enum name="CLIK_HEALTH">
-            <description>CLIK health state.</description>
-            <entry value="0" name="CLIK_HEALTH_FULL_OP">
-                <description>All capabilities are operational and ready for use</description>
-            </entry>
-            <entry value="1" name="CLIK_HEALTH_PARTIAL_OP">
-                <description>Some, but not all, capabilities are operational and ready for use. i.e. multi dropper has released some of its munitions.</description>
-            </entry>
-            <entry value="2" name="CLIK_HEALTH_DEGRADED">
-                <description>One or more capabilities are operating in a degraded mode that prevents full performance.</description>
-            </entry>
-            <entry value="3" name="CLIK_HEALTH_UNAVAILABLE">
-                <description>All capabilities require some form of action to become operational. i.e. all ammo has been used</description>
-            </entry>
-            <entry value="4" name="CLIK_HEALTH_DAMAGED">
-                <description>A failure is preventing operational use and maintenance is required</description>
-            </entry>
-        </enum>
-        
-        <enum name="CLIK_CAPABILITY_TYPE">
-            <!-- Values 0-191 reserved for CLIK. 192-255 available for vendor specific capabilities -->
-            <description>CLIK Payload capability types.</description>
-            <entry value="0" name="CLIK_CAPABILITY_TYPE_BASIC">
-                <description>Simple capability</description>
-            </entry>
-            <entry value="1" name="CLIK_CAPABILITY_TYPE_BASIC_SAFETY">
-                <description>Simple capability which uses safety signals</description>
-            </entry>
-            <entry value="2" name="CLIK_CAPABILITY_TYPE_DROPPER">
-                <description>Dropper capability</description>
-            </entry>
-        </enum>
-
-        <enum name="CLIK_CAPABILITY_STATE">
-            <!-- Values 0-191 reserved for CLIK. 192-255 available for vendor specific states -->
-            <description>CLIK Payload capability states.</description>
-            <entry value="0" name="CLIK_CAPABILITY_STATE_UNAVAILABLE">
-                <description>Not available</description>
-            </entry>
-            <entry value="1" name="CLIK_CAPABILITY_STATE_NOT_READY">
-                <description>Not ready to activate</description>
-            </entry>
-            <entry value="2" name="CLIK_CAPABILITY_STATE_READY">
-                <description>Ready to be activated</description>
-            </entry>
-            <entry value="3" name="CLIK_CAPABILITY_STATE_ACTIVE">
-                <description>Activated</description>
-            </entry>
-        </enum>
-
-        <enum name="CLIK_CAPABILITY_EVENT">
-            <!-- Values 0-191 reserved for CLIK. 192-255 available for vendor specific events -->
-            <description>CLIK Payload capability events.</description>
-            <entry value="0" name="CLIK_EVENT_ACTIVATE">
-                <description>Activate a capability</description>
-            </entry>
-            <entry value="1" name="CLIK_EVENT_DEACTIVATE">
-                <description>Deactivate a capability</description>
-            </entry>
-            <entry value="2" name="CLIK_EVENT_RESET">
-                <description>Reset from a latched state</description>
-            </entry>
-            <entry value="3" name="CLIK_EVENT_TRIGGER">
-                <description>Trigger something to occur</description>
-            </entry>
-            <entry value="4" name="CLIK_EVENT_FAULT_CLEAR">
-                <description>Clear a latched fault</description>
-            </entry>
-        </enum>
-
         <enum name="CLIK_SAFETY">
             <description>CLIK safety signal states.</description>
             <entry value="0" name="CLIK_SAFETY_NOT_MONITORED">
@@ -166,7 +96,7 @@
             </entry>
         </enum>
 
-        <enum name="CLIK_PLATFORM_CHAN_STATE">
+        <enum name="CLIK_PLATFORM_CHAN_PAYLOAD_STATE">
             <description>CLIK Platform Channel state.</description>
             <entry value="0" name="CLIK_CHAN_STATE_NO_PAYLOAD_DETECTED">
                 <description>No Payload connected</description>
@@ -175,22 +105,28 @@
                 <description>Payload detected but Power circuit to Payload is off</description>
             </entry>
             <entry value="2" name="CLIK_CHAN_STATE_PAYLOAD_INIT">
-                <description>Setting Payload Identifiers</description>
+                <description>In payload initialization state</description>
             </entry>
             <entry value="3" name="CLIK_CHAN_STATE_PAYLOAD_ACTIVE">
                 <description>Payload configured and available on MAVLink Bus</description>
             </entry>
+            <entry value="4" name="CLIK_CHAN_STATE_UNRESPONSIVE">
+                <description>Unable to communicate with attached Payload </description>
+            </entry>
         </enum>
 
-        <!-- CLIK specific MAV_CMD entries added to those found in common.xml-->
+        <!-- CLIK specific MAV_CMD entries added to those found in common.xml and military.xml-->
         <enum name="MAV_CMD">
-            <entry value="53900" name="MAV_CMD_CLIK_CAP_SEND_EVENT" command="true">
-                <description>Deliver an event to a CLIK Payload capability</description>
-                <param index="1" label="Capability ID" minValue="1" decimalPlaces="0" increment="1">Identifier of Capabilitity to send event to</param>
-                <param index="2" label="Capability Event" enum="CLIK_CAPABILITY_EVENT">Event to deliver</param>
+            <entry value="53900" name="MAV_CMD_CLIK_INIT_SET_IDS" command="true">
+                <description>Send an initialization command</description>
+                <param index="1" label="System ID" minValue="1" maxValue="255" decimalPlaces="0" increment="1">System identifer value to set.</param>
+                <param index="2" label="Component ID" minValue="1" maxValue="255" decimalPlaces="0" increment="1">Component identifer value to set.</param>
             </entry>
-            <entry value="53901" name="MAV_CMD_CLIK_PWR_SET" command="true">
-                <description>Deliver an event to a CLIK Payload capability</description>
+            <entry value="53901" name="MAV_CMD_CLIK_INIT_START" command="true">
+                <description>Start the payload with the assigned identifier values</description>
+            </entry>
+            <entry value="53902" name="MAV_CMD_CLIK_PWR_SET" command="true">
+                <description>Send a power command</description>
                 <param index="1" label="chan_id" minValue="1" decimalPlaces="0" increment="1">Channel to command. 0 for master power.</param>
                 <param index="2" label="Command" enum="CLIK_POWER_CMD">Power command</param>
             </entry>
@@ -210,21 +146,6 @@
             <field type="char[32]" name="serial_number">Hardware serial number. The field must be zero terminated if it has a value. The field is optional and can be empty/all zeros.</field>
             <field type="uint8_t" name="chan_id">Platform channel identifier this Payload is mounted to</field>
             <field type="uint8_t" name="instance">Instance index of this Payload MAVLink component interface</field>
-        </message>
-
-        <message id="53901" name="CLIK_PAYLOAD_STATUS">
-            <description>CLIK Payload status data.</description>
-            <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since boot).</field>
-            <field type="uint8_t" name="health" enum="CLIK_HEALTH">Overall health of the Payload</field>
-            <field type="uint8_t" name="safety_enable" enum="CLIK_SAFETY">State of safety enable signal</field>
-            <field type="uint8_t" name="safety_execute" enum="CLIK_SAFETY">State of safety execute signal</field>
-            <field type="uint8_t" name="cap_avail_count">Number of capabilities available for use</field>
-        </message>
-
-        <message id="53902" name="CLIK_CAPABILITY_STATUS">
-            <description>CLIK Payload capability status data.</description>
-            <field type="uint8_t" name="cap_id" instance="true">Capability identifier</field>
-            <field type="uint8_t" name="state" enum="CLIK_CAPABILITY_STATE">Current state of capability</field>
         </message>
 
         <message id="53903" name="CLIK_PLATFORM_STATUS">
@@ -247,7 +168,7 @@
             <field type="uint8_t" name="safety_execute" enum="CLIK_SAFETY">State of safety execute signal</field>
             <field type="float" name="voltage_out" units="V" invalid="NaN">Voltage measured on output of the channel</field>
             <field type="float" name="current_out" units="A" invalid="NaN">Current measured on output of the channel</field>
-            <field type="uint8_t" name="payload_comm_state" enum="CLIK_PLATFORM_CHAN_STATE">Indicates if a payload is detected and what its state is</field>
+            <field type="uint8_t" name="payload_comm_state" enum="CLIK_PLATFORM_CHAN_PAYLOAD_STATE">Indicates if a payload is detected and what its state is</field>
             <field type="uint8_t" name="payload_power_state" enum="CLIK_POWER_STATE">State of output power circuit</field>
         </message>
 
